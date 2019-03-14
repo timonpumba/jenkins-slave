@@ -75,7 +75,12 @@ RUN mkdir -p $DEPCHECK_DATA \
  && chown jenkins:jenkins $DEPCHECK_DATA
 
 # --Install OWASP ZAP
+#Download all ZAP docker files
 RUN git clone https://github.com/zaproxy/zaproxy.git
+
+#Switch to the docker folder
+WORKDIR zaproxy/docker
+
 RUN gem install zapr
 RUN pip install --upgrade pip zapcli python-owasp-zap-v2.4 
 
