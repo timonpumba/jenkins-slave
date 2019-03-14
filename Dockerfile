@@ -125,10 +125,10 @@ RUN cd $TOOLS_DIR/zaproxy \
 RUN pwd
 RUN cd $TOOLS_DIR/zaproxy/docker \
     && ls -la
-COPY zap* $TOOLS_DIR/zaproxy/docker/
-COPY webswing.config /opt/security/zaproxy/docker/webswing/
-COPY policies /opt/security/zaproxy/docker/policies/
-COPY .xinitrc /opt/security/zaproxy/docker/
+COPY $TOOLS_DIR/zaproxy/docker/zap* /zap/
+COPY $TOOLS_DIR/zaproxy/docker/webswing/webswing.config /zap/webswing/
+COPY $TOOLS_DIR/zaproxy/docker/policies /home/zap/.ZAP/policies/
+COPY $TOOLS_DIR/zaproxy/docker/.xinitrc /home/zap/
 
 #Copy doesn't respect USER directives so we need to chown and to do that we need to be root
 USER root
