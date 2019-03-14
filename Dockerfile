@@ -83,7 +83,7 @@ RUN pip install --upgrade pip zapcli python-owasp-zap-v2.4
 
 RUN useradd -d /home/zap -m -s /bin/bash zap
 RUN echo zap:zap | chpasswd
-RUN mkdir /zap && chown zap:zap /zap
+RUN mkdir zap && chown zap:zap zap
 
 RUN pwd
 RUN ls -la
@@ -120,18 +120,18 @@ ENV HOME /home/zap/
 RUN pwd
 RUN ls -la
 
-COPY zap* /zap/
-COPY webswing.config /zap/webswing/
+COPY zap* zap/
+COPY webswing.config zap/webswing/
 COPY policies /home/zap/.ZAP/policies/
 COPY .xinitrc /home/zap/
 
 #Copy doesn't respect USER directives so we need to chown and to do that we need to be root
 USER root
 
-RUN chown zap:zap /zap/zap-x.sh && \
-	chown zap:zap /zap/zap-baseline.py && \
-	chown zap:zap /zap/zap-webswing.sh && \
-	chown zap:zap /zap/webswing/webswing.config && \
+RUN chown zap:zap zap/zap-x.sh && \
+	chown zap:zap zap/zap-baseline.py && \
+	chown zap:zap zap/zap-webswing.sh && \
+	chown zap:zap zap/webswing/webswing.config && \
 	chown zap:zap -R /home/zap/.ZAP/ && \
 	chown zap:zap /home/zap/.xinitrc && \
 	chmod a+x /home/zap/.xinitrc
