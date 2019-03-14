@@ -120,7 +120,10 @@ ENV HOME /home/zap/
 RUN pwd
 RUN ls -la
 
-RUN cd $TOOLS_DIR \
+RUN cd $TOOLS_DIR/zaproxy \
+    && ls -la
+RUN pwd
+RUN cd $TOOLS_DIR/zaproxy/docker \
     && ls -la
 COPY zap* $TOOLS_DIR/zaproxy/docker/
 COPY webswing.config /opt/security/zaproxy/docker/webswing/
