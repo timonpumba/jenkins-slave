@@ -95,18 +95,18 @@ USER zap
 RUN mkdir /home/zap/.vnc
 
 # Download and expand the latest stable release for ZAP
-RUN curl -s https://raw.githubusercontent.com/zaproxy/zap-admin/master/ZapVersions.xml | xmlstarlet sel -t -v //url |grep -i Linux | wget -nv --content-disposition -i - -O - | tar zxv
-RUN cp -R ZAP*/* . 
-RUN rm -R ZAP* 
+RUN curl -s https://raw.githubusercontent.com/zaproxy/zap-admin/master/ZapVersions.xml | xmlstarlet sel -t -v //url |grep -i Linux | wget -nv --content-disposition -i - -O - | tar zxv \
+&& cp -R ZAP*/* . \
+&& rm -R ZAP* \ 
 # Setup Webswing
-RUN curl -s -L https://bitbucket.org/meszarv/webswing/downloads/webswing-2.5.10.zip > webswing.zip
-RUN unzip webswing.zip
-RUN rm webswing.zip
-RUN mv webswing-* webswing
+&& curl -s -L https://bitbucket.org/meszarv/webswing/downloads/webswing-2.5.10.zip > webswing.zip \
+&& unzip webswing.zip \
+&& rm webswing.zip \
+&& mv webswing-* webswing \
 # Remove Webswing demos
-RUN rm -R webswing/demo/
+&& rm -R webswing/demo/ \
 # Accept ZAP license
-RUN touch AcceptedLicense
+&& touch AcceptedLicense
 
 
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
@@ -120,18 +120,18 @@ ENV HOME /home/zap/
 RUN pwd
 RUN ls -la
 
-COPY zap* zap/
-COPY webswing.config zap/webswing/
+COPY zap* /zap/
+COPY webswing.config /zap/webswing/
 COPY policies /home/zap/.ZAP/policies/
 COPY .xinitrc /home/zap/
 
 #Copy doesn't respect USER directives so we need to chown and to do that we need to be root
 USER root
 
-RUN chown zap:zap zap/zap-x.sh && \
-	chown zap:zap zap/zap-baseline.py && \
-	chown zap:zap zap/zap-webswing.sh && \
-	chown zap:zap zap/webswing/webswing.config && \
+RUN chown zap:zap /zap/zap-x.sh && \
+	chown zap:zap /zap/zap-baseline.py && \
+	chown zap:zap /zap/zap-webswing.sh && \
+	chown zap:zap /zap/webswing/webswing.config && \
 	chown zap:zap -R /home/zap/.ZAP/ && \
 	chown zap:zap /home/zap/.xinitrc && \
 	chmod a+x /home/zap/.xinitrc
