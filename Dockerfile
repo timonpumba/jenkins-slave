@@ -83,7 +83,7 @@ WORKDIR zaproxy
 RUN pwd
 RUN ls -la 
 #Switch to the docker folder
-WORKDIR zaproxy/docker
+WORKDIR docker
 RUN pwd
 RUN ls -la 
 RUN gem install zapr
