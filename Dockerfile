@@ -120,10 +120,10 @@ ENV HOME /home/zap/
 RUN pwd
 RUN ls -la
 
-COPY zap* /zap/
-COPY webswing.config /zap/webswing/
-COPY policies /home/zap/.ZAP/policies/
-COPY .xinitrc /home/zap/
+COPY zap* /opt/security/zaproxy/docker/
+COPY webswing.config /opt/security/zaproxy/docker//webswing/
+COPY policies /opt/security/zaproxy/docker/policies/
+COPY .xinitrc /opt/security/zaproxy/docker/
 
 #Copy doesn't respect USER directives so we need to chown and to do that we need to be root
 USER root
