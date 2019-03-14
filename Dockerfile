@@ -79,6 +79,7 @@ RUN mkdir -p $DEPCHECK_DATA \
 RUN git clone https://github.com/zaproxy/zaproxy.git
 
 RUN chmod 755 zaproxy/docker
+WORKDIR zaproxy
 RUN pwd
 RUN ls -la 
 #Switch to the docker folder
@@ -91,6 +92,7 @@ RUN useradd -d /home/zap -m -s /bin/bash zap
 RUN echo zap:zap | chpasswd
 RUN mkdir /zap && chown zap:zap /zap
 
+WORKDIR zap
 #Change to the zap user so things get done as the right person (apart from copy)
 USER zap
 
