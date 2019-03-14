@@ -79,7 +79,7 @@ RUN mkdir -p $DEPCHECK_DATA \
 RUN git clone https://github.com/zaproxy/zaproxy.git
 
 RUN chmod 755 zaproxy/docker
-RUN pwd
+RUN ls -la /zaproxy
 #Switch to the docker folder
 WORKDIR zaproxy/docker
 
