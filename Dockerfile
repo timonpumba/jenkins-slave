@@ -84,14 +84,16 @@ RUN pwd
 RUN ls -la 
 #Switch to the docker folder
 WORKDIR zaproxy/docker
-
+RUN pwd
+RUN ls -la 
 RUN gem install zapr
 RUN pip install --upgrade pip zapcli python-owasp-zap-v2.4 
 
 RUN useradd -d /home/zap -m -s /bin/bash zap
 RUN echo zap:zap | chpasswd
 RUN mkdir /zap && chown zap:zap /zap
-
+RUN pwd
+RUN ls -la 
 WORKDIR zap
 #Change to the zap user so things get done as the right person (apart from copy)
 USER zap
