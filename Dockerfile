@@ -110,8 +110,8 @@ RUN curl -s https://raw.githubusercontent.com/zaproxy/zap-admin/master/ZapVersio
 
 
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
-ENV PATH $JAVA_HOME/bin:/zap/:$PATH
-ENV ZAP_PATH /zap/zap.sh
+ENV PATH $JAVA_HOME/bin:$TOOLS_DIR/zap/:$PATH
+ENV ZAP_PATH $TOOLS_DIR/zap/zap.sh
 
 # Default port for use with zapcli
 ENV ZAP_PORT 8080
@@ -127,16 +127,16 @@ RUN cd $TOOLS_DIR/zaproxy/docker \
     && ls -la
 RUN cp $TOOLS_DIR/zaproxy/docker/zap* $TOOLS_DIR/zap/ \
  && cp $TOOLS_DIR/zaproxy/docker/webswing.config  $TOOLS_DIR/zap/webswing/ \
- && cp $TOOLS_DIR/zaproxy/docker/policies /home/zap/.ZAP/policies/ \
+ && cp -r $TOOLS_DIR/zaproxy/docker/policies /home/zap/.ZAP/policies/ \
  && cp $TOOLS_DIR/zaproxy/docker/.xinitrc /home/zap/
 
 #Copy doesn't respect USER directives so we need to chown and to do that we need to be root
 USER root
 
-RUN chown zap:zap /zap/zap-x.sh && \
-	chown zap:zap /zap/zap-baseline.py && \
-	chown zap:zap /zap/zap-webswing.sh && \
-	chown zap:zap /zap/webswing/webswing.config && \
+RUN chown zap:zap $TOOLS_DIR/zap/zap-x.sh && \
+	chown zap:zap $TOOLS_DIR/zap/zap-baseline.py && \
+	chown zap:zap $TOOLS_DIR/zap/zap-webswing.sh && \
+	chown zap:zap $TOOLS_DIR/zap/webswing/webswing.config && \
 	chown zap:zap -R /home/zap/.ZAP/ && \
 	chown zap:zap /home/zap/.xinitrc && \
 	chmod a+x /home/zap/.xinitrc
