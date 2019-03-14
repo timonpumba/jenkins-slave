@@ -93,6 +93,7 @@ WORKDIR zap
 USER zap
 
 RUN mkdir /home/zap/.vnc
+RUN chmod -R 755 /home/zap/
 
 # Download and expand the latest stable release for ZAP
 RUN curl -s https://raw.githubusercontent.com/zaproxy/zap-admin/master/ZapVersions.xml | xmlstarlet sel -t -v //url |grep -i Linux | wget -nv --content-disposition -i - -O - | tar zxv \
