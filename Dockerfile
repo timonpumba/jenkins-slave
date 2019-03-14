@@ -125,7 +125,7 @@ RUN cd $TOOLS_DIR/zaproxy \
 RUN pwd
 RUN cd $TOOLS_DIR/zaproxy/docker \
     && ls -la
-COPY /opt/security-tools/zaproxy/docker/zap* /zap/
+RUN cp $TOOLS_DIR/zaproxy/docker/zap* $TOOLS_DIR/zap/
 COPY $TOOLS_DIR/zaproxy/docker/webswing/webswing.config /zap/webswing/
 COPY $TOOLS_DIR/zaproxy/docker/policies /home/zap/.ZAP/policies/
 COPY $TOOLS_DIR/zaproxy/docker/.xinitrc /home/zap/
