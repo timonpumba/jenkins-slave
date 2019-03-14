@@ -145,7 +145,7 @@ HEALTHCHECK --retries=5 --interval=5s CMD zap-cli status
 
 
 # -- as jenkins user
-USER jenkins
+#USER jenkins
 
 # -- set entrypoint for the container
-ENTRYPOINT ["/usr/local/bin/jenkins-slave"]
+#ENTRYPOINT ["/usr/local/bin/jenkins-slave"]
