@@ -62,7 +62,7 @@ RUN mkdir -p $TOOLS_DIR
 
 WORKDIR $TOOLS_DIR
 # -- Install SpotBugs with FindSecBugs plugin
-RUN curl -sSL http://central.maven.org/maven2/com/github/spotbugs/spotbugs/${SPOTBUGS_VERSION}/spotbugs-${SPOTBUGS_VERSION}.tgz | tar -zxf \
+RUN curl -sSL http://central.maven.org/maven2/com/github/spotbugs/spotbugs/${SPOTBUGS_VERSION}/spotbugs-${SPOTBUGS_VERSION}.tgz | tar -zxf - \
  && curl --create-dirs -sSLo spotbugs-${SPOTBUGS_VERSION}/plugin/findsecbugs-plugin.jar http://central.maven.org/maven2/com/h3xstream/findsecbugs/findsecbugs-plugin/1.8.0/findsecbugs-plugin-1.8.0.jar
  
 # -- Install OWASP Depdendency check
