@@ -60,13 +60,13 @@ ENV DEPCHECK_DATA=$TOOLS_DIR/dependency-check/data
  
 RUN mkdir -p $TOOLS_DIR
 
+WORKDIR $TOOLS_DIR
 # -- Install SpotBugs with FindSecBugs plugin
-RUN curl -sSL http://central.maven.org/maven2/com/github/spotbugs/spotbugs/${SPOTBUGS_VERSION}/spotbugs-${SPOTBUGS_VERSION}.tgz | tar -zxf - -C $TOOLS_DIR \
- && curl --create-dirs -sSLo /opt/security-tools/spotbugs-${SPOTBUGS_VERSION}/plugin/findsecbugs-plugin.jar http://central.maven.org/maven2/com/h3xstream/findsecbugs/findsecbugs-plugin/1.8.0/findsecbugs-plugin-1.8.0.jar
+RUN curl -sSL http://central.maven.org/maven2/com/github/spotbugs/spotbugs/${SPOTBUGS_VERSION}/spotbugs-${SPOTBUGS_VERSION}.tgz | tar -zxf \
+ && curl --create-dirs -sSLo spotbugs-${SPOTBUGS_VERSION}/plugin/findsecbugs-plugin.jar http://central.maven.org/maven2/com/h3xstream/findsecbugs/findsecbugs-plugin/1.8.0/findsecbugs-plugin-1.8.0.jar
  
 # -- Install OWASP Depdendency check
-RUN cd $TOOLS_DIR \
- && curl -sSLO https://dl.bintray.com/jeremy-long/owasp/dependency-check-${DEPCHECK_VERSION}-release.zip \
+RUN curl -sSLO https://dl.bintray.com/jeremy-long/owasp/dependency-check-${DEPCHECK_VERSION}-release.zip \
  && unzip dependency-check-${DEPCHECK_VERSION}-release.zip \
  && rm -f dependency-check-${DEPCHECK_VERSION}-release.zip
  
@@ -78,22 +78,16 @@ RUN mkdir -p $DEPCHECK_DATA \
 #Download all ZAP docker files
 RUN git clone https://github.com/zaproxy/zaproxy.git
 
-RUN chmod 766 zaproxy/docker
-WORKDIR zaproxy
-RUN pwd
-RUN ls -la 
-#Switch to the docker folder
-WORKDIR docker
-RUN pwd
-RUN ls -la 
 RUN gem install zapr
 RUN pip install --upgrade pip zapcli python-owasp-zap-v2.4 
 
 RUN useradd -d /home/zap -m -s /bin/bash zap
 RUN echo zap:zap | chpasswd
 RUN mkdir /zap && chown zap:zap /zap
+
 RUN pwd
-RUN ls -la 
+RUN ls -la
+ 
 WORKDIR zap
 #Change to the zap user so things get done as the right person (apart from copy)
 USER zap
