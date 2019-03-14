@@ -88,8 +88,6 @@ RUN useradd -d /home/zap -m -s /bin/bash zap
 RUN echo zap:zap | chpasswd
 RUN mkdir /zap && chown zap:zap /zap
 
-WORKDIR /zap
-
 #Change to the zap user so things get done as the right person (apart from copy)
 USER zap
 
@@ -121,7 +119,7 @@ ENV HOME /home/zap/
 RUN pwd
 RUN ls -la
 
-COPY zap-2.7.0.jar zap.bat zap.ico zap.sh /zap/
+COPY zap* /zap/
 COPY webswing.config /zap/webswing/
 COPY policies /home/zap/.ZAP/policies/
 COPY .xinitrc /home/zap/
