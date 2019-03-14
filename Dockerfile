@@ -78,7 +78,7 @@ RUN mkdir -p $DEPCHECK_DATA \
 #Download all ZAP docker files
 RUN git clone https://github.com/zaproxy/zaproxy.git
 
-RUN chmod 755 zaproxy/docker
+RUN chmod 766 zaproxy/docker
 WORKDIR zaproxy
 RUN pwd
 RUN ls -la 
