@@ -75,6 +75,7 @@ RUN mkdir -p $DEPCHECK_DATA \
  && chown jenkins:jenkins $DEPCHECK_DATA
 
 # --Install OWASP ZAP
+RUN git clone https://github.com/zaproxy/zaproxy.git
 RUN gem install zapr
 RUN pip install --upgrade pip zapcli python-owasp-zap-v2.4 
 
