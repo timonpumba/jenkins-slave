@@ -83,28 +83,33 @@ RUN mkdir -p $DEPCHECK_DATA \
 #Download all ZAP docker files
 RUN mkdir -p $TOOLS_DIR/zaproxy
 RUN git clone https://github.com/zaproxy/zaproxy.git $TOOLS_DIR/zaproxy
- 
+RUN curl -s https://raw.githubusercontent.com/zaproxy/zap-admin/master/ZapVersions.xml | xmlstarlet sel -t -v //url |grep -i Linux | wget -nv --content-disposition -i - -O - | tar zxv -C $TOOLS_DIR/zaproxy \
+    && curl -s -L https://bitbucket.org/meszarv/webswing/downloads/webswing-2.5.10.zip > $TOOLS_DIR/webswing.zip \
+    && unzip $TOOLS_DIR/webswing.zip \
+    && rm $TOOLS_DIR/webswing.zip 
+    
 WORKDIR /zap
 #Change to the zap user so things get done as the right person (apart from copy)
 USER zap
 
 RUN mkdir /home/zap/.vnc
 
-
 # Download and expand the latest stable release for ZAP
-RUN curl -s https://raw.githubusercontent.com/zaproxy/zap-admin/master/ZapVersions.xml | xmlstarlet sel -t -v //url |grep -i Linux | wget -nv --content-disposition -i - -O - | tar zxv -C $TOOLS_DIR \
-&& cp -R $TOOLS_DIR/ZAP*/* . \
-&& rm -R $TOOLS_DIR/ZAP* \ 
+
+RUN cp -R $TOOLS_DIR/zaproxy/ZAP*/* . \
 # Setup Webswing
-&& curl -s -L https://bitbucket.org/meszarv/webswing/downloads/webswing-2.5.10.zip > $TOOLS_DIR/webswing.zip \
-&& unzip $TOOLS_DIR/webswing.zip \
-&& rm $TOOLS_DIR/webswing.zip \
 && mv $TOOLS_DIR/webswing-* webswing \
 # Remove Webswing demos
 && rm -R webswing/demo/ \
 # Accept ZAP license
 && touch AcceptedLicense
 
+#Deleting files from source
+USER root
+RUN rm -R $TOOLS_DIR/ZAP* 
+
+#Reverting to zap user to continue
+USER zap
 
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
 ENV PATH $JAVA_HOME/bin:/zap/:$PATH
