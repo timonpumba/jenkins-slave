@@ -134,10 +134,10 @@ RUN cp $TOOLS_DIR/zaproxy/docker/zap* . \
 #Copy doesn't respect USER directives so we need to chown and to do that we need to be root
 USER root
 
-RUN chown zap:zap /zap/zap-x.sh && \
-	chown zap:zap /zap/zap-baseline.py && \
-	chown zap:zap /zap/zap-webswing.sh && \
-	chown zap:zap /zap/webswing/webswing.config && \
+RUN chown zap:zap zap-x.sh && \
+	chown zap:zap zap-baseline.py && \
+	chown zap:zap zap-webswing.sh && \
+	chown zap:zap /webswing/webswing.config && \
 	chown zap:zap -R /home/zap/.ZAP/ && \
 	chown zap:zap /home/zap/.xinitrc && \
 	chmod a+x /home/zap/.xinitrc
