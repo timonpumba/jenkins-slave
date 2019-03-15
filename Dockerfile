@@ -48,7 +48,11 @@ RUN apt update -qqy \
  && rm -rf /var/lib/apt/lists/*
 
 RUN gem install zapr
-RUN pip install --upgrade pip zapcli python-owasp-zap-v2.4
+RUN pip install --upgrade pip zapcli python-owasp-zap-v2.4 
+
+RUN useradd -d /home/zap -m -s /bin/bash zap
+RUN echo zap:zap | chpasswd
+RUN mkdir zap && chown zap:zap zap
 
 # -- Install security tools in TOOLS_DIR
 ENV SPOTBUGS_VERSION=3.1.11
@@ -77,23 +81,13 @@ RUN mkdir -p $DEPCHECK_DATA \
 # --Install OWASP ZAP
 #Download all ZAP docker files
 RUN git clone https://github.com/zaproxy/zaproxy.git
-
-RUN gem install zapr
-RUN pip install --upgrade pip zapcli python-owasp-zap-v2.4 
-
-RUN useradd -d /home/zap -m -s /bin/bash zap
-RUN echo zap:zap | chpasswd
-RUN mkdir zap && chown zap:zap zap
-
-RUN pwd
-RUN ls -la
  
-WORKDIR zap
+WORKDIR home/jenkins/zap
 #Change to the zap user so things get done as the right person (apart from copy)
 USER zap
 
 RUN mkdir /home/zap/.vnc
-RUN chmod -R 755 /home/zap/
+
 
 # Download and expand the latest stable release for ZAP
 RUN curl -s https://raw.githubusercontent.com/zaproxy/zap-admin/master/ZapVersions.xml | xmlstarlet sel -t -v //url |grep -i Linux | wget -nv --content-disposition -i - -O - | tar zxv \
@@ -111,18 +105,15 @@ RUN curl -s https://raw.githubusercontent.com/zaproxy/zap-admin/master/ZapVersio
 
 
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
-ENV PATH $JAVA_HOME/bin:$TOOLS_DIR/zap/:$PATH
-ENV ZAP_PATH $TOOLS_DIR/zap/zap.sh
+ENV PATH $JAVA_HOME/bin:/zap/:$PATH
+ENV ZAP_PATH /zap/zap.sh
 
 # Default port for use with zapcli
 ENV ZAP_PORT 8080
-ENV HOME $TOOLS_DIR/zap/
+ENV HOME /home/zap/
 
-RUN pwd
-RUN ls -la
-
-RUN cp $TOOLS_DIR/zaproxy/docker/zap* $TOOLS_DIR/zap/ \
- && cp $TOOLS_DIR/zaproxy/docker/webswing.config  $TOOLS_DIR/zap/webswing/ \
+RUN cp $TOOLS_DIR/zaproxy/docker/zap* . \
+ && cp $TOOLS_DIR/zaproxy/docker/webswing.config  ./webswing/ \
  && mkdir -p /home/zap/.ZAP/policies/ \
  && cp -r $TOOLS_DIR/zaproxy/docker/policies /home/zap/.ZAP/policies/ \
  && cp $TOOLS_DIR/zaproxy/docker/.xinitrc /home/zap/
@@ -130,10 +121,10 @@ RUN cp $TOOLS_DIR/zaproxy/docker/zap* $TOOLS_DIR/zap/ \
 #Copy doesn't respect USER directives so we need to chown and to do that we need to be root
 USER root
 
-RUN chown zap:zap $TOOLS_DIR/zap/zap-x.sh && \
-	chown zap:zap $TOOLS_DIR/zap/zap-baseline.py && \
-	chown zap:zap $TOOLS_DIR/zap/zap-webswing.sh && \
-	chown zap:zap $TOOLS_DIR/zap/webswing/webswing.config && \
+RUN chown zap:zap /zap/zap-x.sh && \
+	chown zap:zap /zap/zap-baseline.py && \
+	chown zap:zap /zap/zap-webswing.sh && \
+	chown zap:zap /zap/webswing/webswing.config && \
 	chown zap:zap -R /home/zap/.ZAP/ && \
 	chown zap:zap /home/zap/.xinitrc && \
 	chmod a+x /home/zap/.xinitrc
