@@ -47,13 +47,6 @@ RUN apt update -qqy \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
-RUN gem install zapr
-RUN pip install --upgrade pip zapcli python-owasp-zap-v2.4 
-
-RUN useradd -d /home/zap -m -s /bin/bash zap
-RUN echo zap:zap | chpasswd
-RUN mkdir zap && chown zap:zap zap
-
 # -- Install security tools in TOOLS_DIR
 ENV SPOTBUGS_VERSION=3.1.11
 ENV DEPCHECK_VERSION=4.0.2
@@ -70,6 +63,17 @@ RUN curl -sSL http://central.maven.org/maven2/com/github/spotbugs/spotbugs/${SPO
  && curl --create-dirs -sSLo /opt/security-tools/spotbugs-${SPOTBUGS_VERSION}/plugin/findsecbugs-plugin.jar http://central.maven.org/maven2/com/h3xstream/findsecbugs/findsecbugs-plugin/1.8.0/findsecbugs-plugin-1.8.0.jar
  
 # -- Install OWASP Depdendency check
+
+RUN gem install zapr
+RUN pip install --upgrade pip zapcli python-owasp-zap-v2.4 
+
+RUN useradd -d /home/zap -m -s /bin/bash zap
+RUN echo zap:zap | chpasswd
+RUN mkdir zap && chown zap:zap zap
+
+RUN pwd
+RUN ls -la
+
 RUN cd $TOOLS_DIR \
  && curl -sSLO https://dl.bintray.com/jeremy-long/owasp/dependency-check-${DEPCHECK_VERSION}-release.zip \
  && unzip dependency-check-${DEPCHECK_VERSION}-release.zip \
@@ -83,6 +87,7 @@ RUN mkdir -p $DEPCHECK_DATA \
 #Download all ZAP docker files
 RUN mkdir -p $TOOLS_DIR/zaproxy
 RUN git clone https://github.com/zaproxy/zaproxy.git $TOOLS_DIR/zaproxy
+
 RUN curl -s https://raw.githubusercontent.com/zaproxy/zap-admin/master/ZapVersions.xml | xmlstarlet sel -t -v //url |grep -i Linux | wget -nv --content-disposition -i - -O - | tar zxv -C $TOOLS_DIR/zaproxy \
     && curl -s -L https://bitbucket.org/meszarv/webswing/downloads/webswing-2.5.10.zip > $TOOLS_DIR/webswing.zip \
     && unzip $TOOLS_DIR/webswing.zip \
@@ -95,7 +100,8 @@ USER zap
 RUN mkdir /home/zap/.vnc
 
 # Download and expand the latest stable release for ZAP
-
+RUN pwd
+RUN ls -la
 RUN cp -R $TOOLS_DIR/zaproxy/ZAP*/* . \
 # Setup Webswing
 && mv $TOOLS_DIR/webswing-* webswing \
