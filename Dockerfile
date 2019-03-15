@@ -103,7 +103,7 @@ RUN pwd
 RUN ls -la
 RUN cp -R $TOOLS_DIR/zaproxy/ZAP*/* . \
 # Setup Webswing
-&& mv $TOOLS_DIR/webswing/webswing-* webswing \
+&& cp -R $TOOLS_DIR/webswing/webswing-* webswing \
 # Remove Webswing demos
 && rm -R webswing/demo/ \
 # Accept ZAP license
@@ -111,7 +111,8 @@ RUN cp -R $TOOLS_DIR/zaproxy/ZAP*/* . \
 
 #Deleting files from source
 USER root
-RUN rm -R $TOOLS_DIR/ZAP* 
+RUN rm -R $TOOLS_DIR/ZAP* \
+  && rm -R $TOOL_DIR/webswing/*
 
 #Reverting to zap user to continue
 USER zap
