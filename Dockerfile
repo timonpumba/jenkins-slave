@@ -99,8 +99,6 @@ USER zap
 RUN mkdir /home/zap/.vnc
 
 # Download and expand the latest stable release for ZAP
-RUN pwd
-RUN ls -la
 RUN cp -R $TOOLS_DIR/zaproxy/ZAP*/* . \
 # Setup Webswing
 && cp -R $TOOLS_DIR/webswing/webswing-* webswing \
