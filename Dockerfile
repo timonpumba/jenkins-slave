@@ -111,7 +111,7 @@ RUN cp -R $TOOLS_DIR/zaproxy/ZAP*/* . \
 
 #Deleting files from source
 USER root
-RUN rm -R $TOOLS_DIR/ZAP* \
+RUN rm -R $TOOLS_DIR/zaproxy/ZAP* \
   && rm -R $TOOL_DIR/webswing/*
 
 #Reverting to zap user to continue
