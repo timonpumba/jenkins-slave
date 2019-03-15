@@ -76,6 +76,7 @@ RUN mkdir -p $DEPCHECK_DATA \
 # --Install OWASP ZAP
 #Download all ZAP docker files
 RUN mkdir -p $TOOLS_DIR/zaproxy
+RUN mkdir -p $TOOLS_DIR/webswing
 RUN git clone https://github.com/zaproxy/zaproxy.git $TOOLS_DIR/zaproxy
 
 RUN gem install zapr
@@ -87,7 +88,7 @@ RUN mkdir zap && chown zap:zap zap
 
 RUN curl -s https://raw.githubusercontent.com/zaproxy/zap-admin/master/ZapVersions.xml | xmlstarlet sel -t -v //url |grep -i Linux | wget -nv --content-disposition -i - -O - | tar zxv -C $TOOLS_DIR/zaproxy \
     && curl -s -L https://bitbucket.org/meszarv/webswing/downloads/webswing-2.5.10.zip > $TOOLS_DIR/webswing.zip \
-    && unzip $TOOLS_DIR/webswing.zip \
+    && unzip $TOOLS_DIR/webswing.zip -$TOOLS_DIR/webswing \
     && rm $TOOLS_DIR/webswing.zip 
 
 RUN cd $TOOLS_DIR && ls -la
@@ -102,7 +103,7 @@ RUN pwd
 RUN ls -la
 RUN cp -R $TOOLS_DIR/zaproxy/ZAP*/* . \
 # Setup Webswing
-&& mv $TOOLS_DIR/webswing-* webswing \
+&& mv $TOOLS_DIR/webswing/webswing-* webswing \
 # Remove Webswing demos
 && rm -R webswing/demo/ \
 # Accept ZAP license
