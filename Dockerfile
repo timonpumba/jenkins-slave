@@ -89,7 +89,8 @@ RUN curl -s https://raw.githubusercontent.com/zaproxy/zap-admin/master/ZapVersio
     && curl -s -L https://bitbucket.org/meszarv/webswing/downloads/webswing-2.5.10.zip > $TOOLS_DIR/webswing.zip \
     && unzip $TOOLS_DIR/webswing.zip \
     && rm $TOOLS_DIR/webswing.zip 
-    
+
+RUN cd $TOOLS_DIR && ls -la
 WORKDIR zap
 #Change to the zap user so things get done as the right person (apart from copy)
 USER zap
