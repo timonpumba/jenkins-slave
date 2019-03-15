@@ -81,7 +81,8 @@ RUN mkdir -p $DEPCHECK_DATA \
 
 # --Install OWASP ZAP
 #Download all ZAP docker files
-RUN git clone https://github.com/zaproxy/zaproxy.git $TOOLS_DIR/
+RUN mkdir -p $TOOLS_DIR/zaproxy
+RUN git clone https://github.com/zaproxy/zaproxy.git $TOOLS_DIR/zaproxy
  
 WORKDIR /zap
 #Change to the zap user so things get done as the right person (apart from copy)
