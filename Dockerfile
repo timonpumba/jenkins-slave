@@ -64,16 +64,6 @@ RUN curl -sSL http://central.maven.org/maven2/com/github/spotbugs/spotbugs/${SPO
  
 # -- Install OWASP Depdendency check
 
-RUN gem install zapr
-RUN pip install --upgrade pip zapcli python-owasp-zap-v2.4 
-
-RUN useradd -d /home/zap -m -s /bin/bash zap
-RUN echo zap:zap | chpasswd
-RUN mkdir zap && chown zap:zap zap
-
-RUN pwd
-RUN ls -la
-
 RUN cd $TOOLS_DIR \
  && curl -sSLO https://dl.bintray.com/jeremy-long/owasp/dependency-check-${DEPCHECK_VERSION}-release.zip \
  && unzip dependency-check-${DEPCHECK_VERSION}-release.zip \
@@ -88,12 +78,19 @@ RUN mkdir -p $DEPCHECK_DATA \
 RUN mkdir -p $TOOLS_DIR/zaproxy
 RUN git clone https://github.com/zaproxy/zaproxy.git $TOOLS_DIR/zaproxy
 
+RUN gem install zapr
+RUN pip install --upgrade pip zapcli python-owasp-zap-v2.4 
+
+RUN useradd -d /home/zap -m -s /bin/bash zap
+RUN echo zap:zap | chpasswd
+RUN mkdir zap && chown zap:zap zap
+
 RUN curl -s https://raw.githubusercontent.com/zaproxy/zap-admin/master/ZapVersions.xml | xmlstarlet sel -t -v //url |grep -i Linux | wget -nv --content-disposition -i - -O - | tar zxv -C $TOOLS_DIR/zaproxy \
     && curl -s -L https://bitbucket.org/meszarv/webswing/downloads/webswing-2.5.10.zip > $TOOLS_DIR/webswing.zip \
     && unzip $TOOLS_DIR/webswing.zip \
     && rm $TOOLS_DIR/webswing.zip 
     
-WORKDIR /zap
+WORKDIR zap
 #Change to the zap user so things get done as the right person (apart from copy)
 USER zap
 
