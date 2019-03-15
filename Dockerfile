@@ -8,7 +8,7 @@ COPY jenkins-slave /usr/local/bin/jenkins-slave
 USER root
 
 # -- make sure script has executable permissions
-RUN chmod +x /usr/local/bin/jenkins-slave
+RUN chmod +wx /usr/local/bin/jenkins-slave
 
 # -- install build essentials and tools
 RUN apt update -qqy \
@@ -64,25 +64,26 @@ ENV DEPCHECK_DATA=$TOOLS_DIR/dependency-check/data
  
 RUN mkdir -p $TOOLS_DIR
 
-WORKDIR $TOOLS_DIR
+
 # -- Install SpotBugs with FindSecBugs plugin
-RUN curl -sSL http://central.maven.org/maven2/com/github/spotbugs/spotbugs/${SPOTBUGS_VERSION}/spotbugs-${SPOTBUGS_VERSION}.tgz | tar -zxf - \
- && curl --create-dirs -sSLo spotbugs-${SPOTBUGS_VERSION}/plugin/findsecbugs-plugin.jar http://central.maven.org/maven2/com/h3xstream/findsecbugs/findsecbugs-plugin/1.8.0/findsecbugs-plugin-1.8.0.jar
+RUN curl -sSL http://central.maven.org/maven2/com/github/spotbugs/spotbugs/${SPOTBUGS_VERSION}/spotbugs-${SPOTBUGS_VERSION}.tgz | tar -zxf - -C $TOOLS_DIR \
+ && curl --create-dirs -sSLo /opt/security-tools/spotbugs-${SPOTBUGS_VERSION}/plugin/findsecbugs-plugin.jar http://central.maven.org/maven2/com/h3xstream/findsecbugs/findsecbugs-plugin/1.8.0/findsecbugs-plugin-1.8.0.jar
  
 # -- Install OWASP Depdendency check
-RUN curl -sSLO https://dl.bintray.com/jeremy-long/owasp/dependency-check-${DEPCHECK_VERSION}-release.zip \
+RUN cd $TOOLS_DIR \
+ && curl -sSLO https://dl.bintray.com/jeremy-long/owasp/dependency-check-${DEPCHECK_VERSION}-release.zip \
  && unzip dependency-check-${DEPCHECK_VERSION}-release.zip \
  && rm -f dependency-check-${DEPCHECK_VERSION}-release.zip
  
 # -- make data directory to persist downloads
 RUN mkdir -p $DEPCHECK_DATA \
- && chown jenkins:jenkins $DEPCHECK_DATA
+&& chown jenkins:jenkins $DEPCHECK_DATA
 
 # --Install OWASP ZAP
 #Download all ZAP docker files
-RUN git clone https://github.com/zaproxy/zaproxy.git
+RUN git clone https://github.com/zaproxy/zaproxy.git $TOOLS_DIR
  
-WORKDIR home/jenkins/zap
+WORKDIR /zap
 #Change to the zap user so things get done as the right person (apart from copy)
 USER zap
 
@@ -90,14 +91,14 @@ RUN mkdir /home/zap/.vnc
 
 
 # Download and expand the latest stable release for ZAP
-RUN curl -s https://raw.githubusercontent.com/zaproxy/zap-admin/master/ZapVersions.xml | xmlstarlet sel -t -v //url |grep -i Linux | wget -nv --content-disposition -i - -O - | tar zxv \
-&& cp -R ZAP*/* . \
-&& rm -R ZAP* \ 
+RUN curl -s https://raw.githubusercontent.com/zaproxy/zap-admin/master/ZapVersions.xml | xmlstarlet sel -t -v //url |grep -i Linux | wget -nv --content-disposition -i - -O - | tar zxv -C $TOOLS_DIR \
+&& cp -R $TOOLS_DIR/ZAP*/* . \
+&& rm -R $TOOLS_DIR/ZAP* \ 
 # Setup Webswing
-&& curl -s -L https://bitbucket.org/meszarv/webswing/downloads/webswing-2.5.10.zip > webswing.zip \
-&& unzip webswing.zip \
-&& rm webswing.zip \
-&& mv webswing-* webswing \
+&& curl -s -L https://bitbucket.org/meszarv/webswing/downloads/webswing-2.5.10.zip > $TOOLS_DIR/webswing.zip \
+&& unzip $TOOLS_DIR/webswing.zip \
+&& rm $TOOLS_DIR/webswing.zip \
+&& mv $TOOLS_DIR/webswing-* webswing \
 # Remove Webswing demos
 && rm -R webswing/demo/ \
 # Accept ZAP license
