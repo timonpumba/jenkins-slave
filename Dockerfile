@@ -116,7 +116,7 @@ ENV ZAP_PATH $TOOLS_DIR/zap/zap.sh
 
 # Default port for use with zapcli
 ENV ZAP_PORT 8080
-ENV HOME /home/zap/
+ENV HOME $TOOLS_DIR/zap/
 
 RUN pwd
 RUN ls -la
