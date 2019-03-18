@@ -113,17 +113,17 @@ ENV ZAP_PATH $TOOLS_DIR/zap/zap.sh
 ENV ZAP_PORT 8080
 ENV HOME /home/jenkins/
 
-RUN cp $TOOLS_DIR/zaproxy/docker/zap* $TOOLS_DIR/zaproxy/ \
+RUN cp $TOOLS_DIR/zaproxy/docker/zap* $TOOLS_DIR/zap/ \
  && cp $TOOLS_DIR/zaproxy/docker/webswing.config  $TOOLS_DIR/zap/webswing/ \
  && mkdir -p /home/jenkins/.ZAP/policies/ \
  && cp -r $TOOLS_DIR/zaproxy/docker/policies /home/jenkins/.ZAP/policies/ \
  && cp $TOOLS_DIR/zaproxy/docker/.xinitrc /home/jenkins/
 
-RUN chown jenkins:jenkins zap-x.sh && \
-	chown jenkins:jenkins zap-baseline.py && \
-	chown jenkins:jenkins zap-webswing.sh && \
-	chown jenkins:jenkins webswing/webswing.config && \
-	chown jenkins:jenkins -R $TOOLS_DIR/.ZAP/ && \
+RUN chown jenkins:jenkins $TOOLS_DIR/zap/zap-x.sh && \
+	chown jenkins:jenkins $TOOLS_DIR/zap/zap-baseline.py && \
+	chown jenkins:jenkins $TOOLS_DIR/zap/zap-webswing.sh && \
+	chown jenkins:jenkins $TOOLS_DIR/zap/webswing/webswing.config && \
+	chown jenkins:jenkins -R /home/jenkins/.ZAP/ && \
 	chown jenkins:jenkins /home/jenkins/.xinitrc && \
 	chmod a+x /home/jenkins/.xinitrc
 
