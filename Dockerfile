@@ -86,6 +86,7 @@ RUN pip install --upgrade pip zapcli python-owasp-zap-v2.4
 #RUN useradd -d /home/zap -m -s /bin/bash zap
 #RUN echo zap:zap | chpasswd
 RUN mkdir $TOOLS_DIR/zap && chown jenkins:jenkins $TOOLS_DIR/zap
+RUN mkdir $TOOLS_DIR/zap/webswing && chown jenkins:jenkins $TOOLS_DIR/zap/webswing
 
 RUN curl -s https://raw.githubusercontent.com/zaproxy/zap-admin/master/ZapVersions.xml | xmlstarlet sel -t -v //url |grep -i Linux | wget -nv --content-disposition -i - -O - | tar zxv -C $TOOLS_DIR/zaproxy \
     && cp -R $TOOLS_DIR/zaproxy/ZAP*/* $TOOLS_DIR/zap/ \
@@ -114,8 +115,8 @@ ENV ZAP_PATH $TOOLS_DIR/zap/zap.sh
 ENV ZAP_PORT 8080
 ENV HOME /home/jenkins/
 
-RUN cp $TOOLS_DIR/zaproxy/docker/zap* . \
- && cp $TOOLS_DIR/zaproxy/docker/webswing.config  $TOOLS_DIR/webswing/ \
+RUN cp $TOOLS_DIR/zaproxy/docker/zap* $TOOLS_DIR/zaproxy/ \
+ && cp $TOOLS_DIR/zaproxy/docker/webswing.config  $TOOLS_DIR/zap/webswing/ \
  && mkdir -p /home/jenkins/.ZAP/policies/ \
  && cp -r $TOOLS_DIR/zaproxy/docker/policies /home/jenkins/.ZAP/policies/ \
  && cp $TOOLS_DIR/zaproxy/docker/.xinitrc /home/jenkins/
