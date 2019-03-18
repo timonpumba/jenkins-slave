@@ -92,7 +92,7 @@ RUN curl -s https://raw.githubusercontent.com/zaproxy/zap-admin/master/ZapVersio
     && rm -R $TOOLS_DIR/zaproxy/ZAP* \
     && curl -s -L https://bitbucket.org/meszarv/webswing/downloads/webswing-2.5.10.zip > $TOOLS_DIR/zap/webswing.zip \
     # Setup Webswing
-    && unzip $TOOLS_DIR/zap/webswing.zip -d $TOOLS_DIR/zap/webswing \
+    && unzip $TOOLS_DIR/zap/webswing.zip \
     && mv $TOOLS_DIR/zap/webswing-* $TOOLS_DIR/zap/webswing \
     && rm $TOOLS_DIR/zap/webswing.zip \
     # Remove Webswing demos
