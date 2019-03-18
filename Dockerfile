@@ -96,7 +96,6 @@ RUN curl -s https://raw.githubusercontent.com/zaproxy/zap-admin/master/ZapVersio
     && unzip $TOOLS_DIR/webswing.zip -d $TOOLS_DIR/webswing \
     && mv $TOOLS_DIR/webswing/webswing-* $TOOLS_DIR/zap/webswing \
     && rm $TOOLS_DIR/webswing.zip \
-    && rm -R $TOOLS_DIR/webswing/* \
     # Remove Webswing demos
     && rm -R $TOOLS_DIR/zap/webswing/demo/ \
     # Accept ZAP license
