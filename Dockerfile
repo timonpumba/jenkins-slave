@@ -44,6 +44,7 @@ RUN apt update -qqy \
     python-pip \
     xvfb \
     x11vnc \
+    vim \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
@@ -82,66 +83,50 @@ RUN git clone https://github.com/zaproxy/zaproxy.git $TOOLS_DIR/zaproxy
 RUN gem install zapr
 RUN pip install --upgrade pip zapcli python-owasp-zap-v2.4 
 
-RUN useradd -d /home/zap -m -s /bin/bash zap
-RUN echo zap:zap | chpasswd
-RUN mkdir zap && chown zap:zap zap
+#RUN useradd -d /home/zap -m -s /bin/bash zap
+#RUN echo zap:zap | chpasswd
+RUN mkdir $TOOLS_DIR/zap && chown jenkins:jenkins $TOOLS_DIR/zap
 
 RUN curl -s https://raw.githubusercontent.com/zaproxy/zap-admin/master/ZapVersions.xml | xmlstarlet sel -t -v //url |grep -i Linux | wget -nv --content-disposition -i - -O - | tar zxv -C $TOOLS_DIR/zaproxy \
+    && cp -R $TOOLS_DIR/zaproxy/ZAP*/* $TOOLS_DIR/zap/ \
+    && rm -R $TOOLS_DIR/zaproxy/ZAP* \
     && curl -s -L https://bitbucket.org/meszarv/webswing/downloads/webswing-2.5.10.zip > $TOOLS_DIR/webswing.zip \
+    # Setup Webswing
     && unzip $TOOLS_DIR/webswing.zip -d $TOOLS_DIR/webswing \
-    && rm $TOOLS_DIR/webswing.zip 
+    && mv -R $TOOLS_DIR/webswing/webswing-* $TOOLS_DIR/zap/webswing \
+    && rm $TOOLS_DIR/webswing.zip \
+    && rm -R $TOOLS_DIR/webswing/* \
+    # Remove Webswing demos
+    && rm -R $TOOLS_DIR/zap/webswing/demo/ \
+    # Accept ZAP license
+    && touch AcceptedLicense
+
 
 RUN cd $TOOLS_DIR && ls -la
-WORKDIR zap
-#Change to the zap user so things get done as the right person (apart from copy)
-USER zap
 
-RUN mkdir /home/zap/.vnc
-
-# Download and expand the latest stable release for ZAP
-RUN cp -R $TOOLS_DIR/zaproxy/ZAP*/* . \
-# Setup Webswing
-&& cp -R $TOOLS_DIR/webswing/webswing-* webswing \
-# Remove Webswing demos
-&& rm -R webswing/demo/ \
-# Accept ZAP license
-&& touch AcceptedLicense
-
-#Deleting files from source
-USER root
-RUN rm -R $TOOLS_DIR/zaproxy/ZAP*
-RUN rm -R $TOOLS_DIR/webswing/*
-
-#Reverting to zap user to continue
-USER zap
+RUN mkdir $TOOLS_DIR/zap/.vnc
 
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
-ENV PATH $JAVA_HOME/bin:/zap/:$PATH
-ENV ZAP_PATH /zap/zap.sh
+ENV PATH $JAVA_HOME/bin:$TOOLS_DIR/zap/:$PATH
+ENV ZAP_PATH $TOOLS_DIR/zap/zap.sh
 
 # Default port for use with zapcli
 ENV ZAP_PORT 8080
-ENV HOME /home/zap/
+ENV HOME /home/jenkins/
 
 RUN cp $TOOLS_DIR/zaproxy/docker/zap* . \
- && cp $TOOLS_DIR/zaproxy/docker/webswing.config  ./webswing/ \
- && mkdir -p /home/zap/.ZAP/policies/ \
- && cp -r $TOOLS_DIR/zaproxy/docker/policies /home/zap/.ZAP/policies/ \
- && cp $TOOLS_DIR/zaproxy/docker/.xinitrc /home/zap/
+ && cp $TOOLS_DIR/zaproxy/docker/webswing.config  $TOOLS_DIR/webswing/ \
+ && mkdir -p /home/jenkins/.ZAP/policies/ \
+ && cp -r $TOOLS_DIR/zaproxy/docker/policies /home/jenkins/.ZAP/policies/ \
+ && cp $TOOLS_DIR/zaproxy/docker/.xinitrc /home/jenkins/
 
-#Copy doesn't respect USER directives so we need to chown and to do that we need to be root
-USER root
-
-RUN chown zap:zap zap-x.sh && \
-	chown zap:zap zap-baseline.py && \
-	chown zap:zap zap-webswing.sh && \
-	chown zap:zap webswing/webswing.config && \
-	chown zap:zap -R /home/zap/.ZAP/ && \
-	chown zap:zap /home/zap/.xinitrc && \
-	chmod a+x /home/zap/.xinitrc
-
-#Change back to zap at the end
-USER zap
+RUN chown jenkins:jenkins zap-x.sh && \
+	chown jenkins:jenkins zap-baseline.py && \
+	chown jenkins:jenkins zap-webswing.sh && \
+	chown jenkins:jenkins webswing/webswing.config && \
+	chown jenkins:jenkins -R $TOOLS_DIR/.ZAP/ && \
+	chown jenkins:jenkins /home/jenkins/.xinitrc && \
+	chmod a+x /home/jenkins/.xinitrc
 
 HEALTHCHECK --retries=5 --interval=5s CMD zap-cli status
 
