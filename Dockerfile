@@ -85,14 +85,14 @@ RUN pip install --upgrade pip zapcli python-owasp-zap-v2.4
 #RUN useradd -d /home/zap -m -s /bin/bash zap
 #RUN echo zap:zap | chpasswd
 RUN mkdir $TOOLS_DIR/zap && chown jenkins:jenkins $TOOLS_DIR/zap
-RUN mkdir $TOOLS_DIR/zap/webswing && chown jenkins:jenkins $TOOLS_DIR/zap/webswing
+#RUN mkdir $TOOLS_DIR/zap/webswing && chown jenkins:jenkins $TOOLS_DIR/zap/webswing
 
 RUN curl -s https://raw.githubusercontent.com/zaproxy/zap-admin/master/ZapVersions.xml | xmlstarlet sel -t -v //url |grep -i Linux | wget -nv --content-disposition -i - -O - | tar zxv -C $TOOLS_DIR/zaproxy \
     && cp -R $TOOLS_DIR/zaproxy/ZAP*/* $TOOLS_DIR/zap/ \
     && rm -R $TOOLS_DIR/zaproxy/ZAP* \
     && curl -s -L https://bitbucket.org/meszarv/webswing/downloads/webswing-2.5.10.zip > $TOOLS_DIR/zap/webswing.zip \
     # Setup Webswing
-    && unzip $TOOLS_DIR/zap/webswing.zip \
+    && unzip $TOOLS_DIR/zap/webswing.zip  -d $TOOLS_DIR/zap \
     && mv $TOOLS_DIR/zap/webswing-* $TOOLS_DIR/zap/webswing \
     && rm $TOOLS_DIR/zap/webswing.zip \
     # Remove Webswing demos
